@@ -70,7 +70,12 @@ def _getUserPasswd(fLog):
 		sAuth = os.environ['HTTP_AUTHORIZATION']
 		
 		if sAuth.startswith('Basic') and len(sAuth) > 12:
-			sAuthPlain = base64.b64decode(sAuth[6:])
+
+			# fix for Python 2.x and Python 3.x (to be tested):
+			# in Python2.x: type of <str>.decode('utf-8') is unicode
+			# in Python3.x: type of <bytes>.decode('utf-8') is str (with unicode UTF-8 encoding)
+
+			sAuthPlain = base64.b64decode(sAuth[6:]).decode('utf-8')
 			lAuth = sAuthPlain.split(':')
 			return( lAuth[0], ':'.join(lAuth[1:]) )
 			
